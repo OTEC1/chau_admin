@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">chau admin</string>
     <string name="category_uplaod">Category Uploads</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="Category_uplaods">Category Uploads</string>
 </resources>

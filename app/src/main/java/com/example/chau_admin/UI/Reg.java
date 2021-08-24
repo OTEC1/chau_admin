@@ -46,33 +46,44 @@ public class Reg extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!email.getText().toString().isEmpty() && !pass.getText().toString().isEmpty()){
                 progressBar.setVisibility(View.VISIBLE);
+                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.getText().toString(), pass.getText().toString())
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
 
-                FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.getText().toString(),pass.getText().toString())
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(Task<AuthResult> task) {
-                            if(task.isSuccessful()){
-
-                            admin_user admin = new admin_user();
-                            admin.setEmail(email.getText().toString());
-                            admin.setUser_id(email.getText().toString().substring(0,email.getText().toString().indexOf("@")));
-                            DocumentReference collectionReference=firebaseFirestore.collection("admins")
-                                    .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
-                            collectionReference.set(admin)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()) {
-                                                new util().message("Registered Successfully", getApplicationContext());
-                                                startActivity(new Intent(getApplicationContext(), Sign_in.class));
-                                                progressBar.setVisibility(View.GONE);
-                                            }
-                                        }
-                                    });
+                                    admin_user admin = new admin_user();
+                                    admin.setEmail(email.getText().toString());
+                                    admin.setUser_id(email.getText().toString().substring(0, email.getText().toString().indexOf("@")));
+                                    DocumentReference collectionReference = firebaseFirestore.collection("admins")
+                                            .document(Objects.requireNonNull(FirebaseAuth.getInstance().getUid()));
+                                    collectionReference.set(admin)
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        new util().message("Registered Successfully", getApplicationContext());
+                                                        startActivity(new Intent(getApplicationContext(), Sign_in.class));
+                                                        progressBar.setVisibility(View.GONE);
+                                                    }
+                                                }
+                                            });
                                 }
                             }
                         });
+            }else
+                new util().message("Pls enter a valid Email and password", getApplicationContext());
+
+
+
+
+
+
+
+
+
             }
         });
 
