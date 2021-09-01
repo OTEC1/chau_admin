@@ -45,7 +45,7 @@ public class Keep_alive extends Service {
         manager.createNotificationChannel(chau);
         NotificationCompat.Builder noBuilder = new NotificationCompat.Builder(this, ADMIN_CHANNEL_ID);
         Notification notification= noBuilder.setOngoing(true)
-                .setContentTitle("Chau is running")
+                .setContentTitle("chau admin is running")
                 .setPriority(NotificationManager.IMPORTANCE_MIN)
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .build();
