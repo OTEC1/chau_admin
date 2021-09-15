@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/framelayout"
     tools:context=".UI.Upload">
 
 
@@ -19,9 +20,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="30dp">
+                android:layout_marginRight="20dp">
 
                 <TextView
                     android:id="@+id/progress"
@@ -50,7 +51,7 @@
                     android:layout_below="@id/photo"
                     android:layout_centerHorizontal="true"
                     android:background="@drawable/custom_lines"
-                    android:hint="Category"
+                    android:hint="Add new Category"
                     android:padding="10dp" />
 
 
@@ -75,6 +76,17 @@
                     android:text="Upload"
                     android:textAllCaps="false" />
 
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/edit_post"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/Category_name"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="10dp"
+                    android:text="Edit Categroy"
+                    android:textAllCaps="false" />
+
+
             </RelativeLayout>
 
             <RelativeLayout
@@ -83,9 +95,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/top_section"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="30dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginTop="10dp"
-                android:layout_marginRight="30dp">
+                android:layout_marginRight="20dp">
 
 
                 <EditText
@@ -131,10 +143,10 @@
             </RelativeLayout>
 
             <TextView
-                android:layout_below="@id/bottom_section"
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
-                android:layout_height="300dp"/>
+                android:layout_height="300dp"
+                android:layout_below="@id/bottom_section"
+                android:layout_alignParentBottom="true" />
 
         </RelativeLayout>
 

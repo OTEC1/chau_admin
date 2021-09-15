@@ -21,6 +21,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.Arrays;
+
 
 public class Post extends Fragment {
 
@@ -52,7 +54,7 @@ public class Post extends Fragment {
         progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
         mfirebaseFirestore = FirebaseFirestore.getInstance();
         collectionReference = mfirebaseFirestore.collection(getString(R.string.Category_uplaods));
-        Query query = collectionReference.orderBy("category", Query.Direction.ASCENDING);
+        Query query = collectionReference.whereNotIn("category", Arrays.asList("Choose category","All dishes")).orderBy("category", Query.Direction.ASCENDING);
         FirestoreRecyclerOptions<Category> options = new FirestoreRecyclerOptions.Builder<Category>().setQuery(query, Category.class).build();
         setLayout(options);
 

@@ -2,22 +2,31 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-    <item
-        android:id="@+id/posted"
-        android:title="Edit Post"
-        android:icon="@drawable/ic_baseline_cached_24" />
 
 
     <item
         android:id="@+id/homes"
-        android:title="Upload Post"
+        android:title="@string/notification_post"
         android:icon="@drawable/ic_baseline_cloud_upload_24" />
+
+
+
+    <item
+        android:id="@+id/report"
+        android:title="Report"
+        android:icon="@drawable/ic_baseline_report_problem_24" />
+
+
+    <item
+        android:id="@+id/issues"
+        android:title="Issues"
+        android:icon="@drawable/ic_baseline_error_outline_24" />
+
 
     <item
         android:id="@+id/sign_in"
         android:title="Sign in"
         android:icon="@drawable/ic_baseline_account_circle_24" />
-
 
 
 </menu>

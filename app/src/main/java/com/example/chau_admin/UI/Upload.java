@@ -43,6 +43,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
 import static com.example.chau_admin.utils.Constants.REQUEST_KEY;
 
 import java.io.File;
@@ -61,9 +62,8 @@ import static com.example.chau_admin.utils.util.PICK_IMAGE;
 public class Upload extends Fragment {
 
 
-
-    private EditText category_name, broadcast_message,topic_token;
-    private Button upload,select,broadcast_button;
+    private EditText category_name, broadcast_message, topic_token;
+    private Button upload, select, broadcast_button,medit_post;
     private ImageView image_view;
     private TextView mprogress;
     private ArrayAdapter arrayAdapter;
@@ -72,19 +72,19 @@ public class Upload extends Fragment {
     private FirebaseFirestore mfirebaseFirestore;
 
 
-
-    private  List<String> list_broadcast_section;
-    private String p1,p2,p3,TAG="Uploader",drop_down;
+    private List<String> list_broadcast_section;
+    private String p1, p2, p3, TAG = "Uploader", drop_down;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_upload, container, false);
-        mfirebaseFirestore=FirebaseFirestore.getInstance();
+        mfirebaseFirestore = FirebaseFirestore.getInstance();
 
-        upload =(Button) view.findViewById(R.id.upload);
-        select =(Button) view.findViewById(R.id.choose);
-        image_view =(ImageView) view.findViewById(R.id.photo);
-        category_name =(EditText) view.findViewById(R.id.Category_name);
+        upload = (Button) view.findViewById(R.id.upload);
+        medit_post = (Button) view.findViewById(R.id.edit_post);
+        select = (Button) view.findViewById(R.id.choose);
+        image_view = (ImageView) view.findViewById(R.id.photo);
+        category_name = (EditText) view.findViewById(R.id.Category_name);
         mprogress = (TextView) view.findViewById(R.id.progress);
         broadcast_message = (EditText) view.findViewById(R.id.notification_broadcasting);
         topic_token = (EditText) view.findViewById(R.id.topics);
@@ -92,24 +92,23 @@ public class Upload extends Fragment {
         spinner = (Spinner) view.findViewById(R.id.spinner);
         Populate_spinner();
 
-        select.setOnClickListener(v -> file_picker(v));
+        select.setOnClickListener(this::file_picker);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                  @Override
-                  public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                      drop_down = (spinner.getItemAtPosition(position).toString());
-                  }
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                drop_down = (spinner.getItemAtPosition(position).toString());
+            }
 
-                  @Override
-                  public void onNothingSelected(AdapterView<?> parent) {
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
 
-                  }
-              });
-
+            }
+        });
 
 
         upload.setOnClickListener(v -> {
-            if (FirebaseAuth.getInstance().getUid() != null){
+            if (FirebaseAuth.getInstance().getUid() != null) {
                 if (imgUri != null) {
                     if (getFile_extension(imgUri).equalsIgnoreCase("png") | getFile_extension(imgUri).equalsIgnoreCase("jpg") | getFile_extension(imgUri).equalsIgnoreCase("jpeg")) {
                         if (!category_name.getText().toString().isEmpty())
@@ -122,19 +121,23 @@ public class Upload extends Fragment {
                 } else
                     new util().message("Error Occurred while select an image file", getContext());
 
-            }
-            else
-                new util().message("Pls sign in",getContext());
+            } else
+                new util().message("Pls sign in", getContext());
+        });
+
+        medit_post.setOnClickListener(j->{
+            new util().open_Fragment(new Post(),null,requireActivity());
         });
 
 
-        broadcast_button.setOnClickListener(m->{
-            if(!drop_down.trim().equals("Choose"))
-                 PUSH_NOTIFICATION((drop_down.equals("Topic"))? "/topics/".concat(topic_token.getText().toString()) : topic_token.getText().toString());
-            else
-                new util().message("Pls select a Section",getContext());
+        broadcast_button.setOnClickListener(m -> {
+            if (!drop_down.trim().equals("Choose"))
+                if (!broadcast_message.getText().toString().isEmpty())
+                    if (!topic_token.getText().toString().isEmpty())
+                        PUSH_NOTIFICATION((drop_down.equals("Topic")) ? "/topics/".concat(topic_token.getText().toString()) : topic_token.getText().toString());
+                    else
+                        new util().message("Pls select a Section", getContext());
         });
-
 
 
         return view;
@@ -145,52 +148,52 @@ public class Upload extends Fragment {
         list_broadcast_section.add("Choose");
         list_broadcast_section.add("Topic");
         list_broadcast_section.add("Device");
-        arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item,list_broadcast_section);
+        arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, list_broadcast_section);
         arrayAdapter.setDropDownViewResource(R.layout.text_pad);
         spinner.setAdapter(arrayAdapter);
-
-
+        
     }
 
     private void PUSH_NOTIFICATION(String c) {
         List<String> device;
-        device=((topic_token.getText().toString().isEmpty()) ? members_call(): Collections.singletonList((c)));
+        device = ((topic_token.getText().toString().isEmpty()) ? members_call() : Collections.singletonList((c)));
         String[] to = device.toArray(new String[device.size()]);
-        Map<String,Object> pay_load_data =new HashMap<>();
-        pay_load_data.put("message",broadcast_message.getText().toString());
-        Pusher.pushrequest push = new  Pusher.pushrequest(pay_load_data,to);
+        Map<String, Object> pay_load_data = new HashMap<>();
+        pay_load_data.put("message", broadcast_message.getText().toString());
+        Pusher.pushrequest push = new Pusher.pushrequest(pay_load_data, to);
 
         //Device id must match  list of app ID's
-        REQUEST_KEY="cb511ecb9256108ee4bbe770a6f6525ae800c5d473c3ee628779a285f5d882ee";
+        REQUEST_KEY = "cb511ecb9256108ee4bbe770a6f6525ae800c5d473c3ee628779a285f5d882ee";
 
-        try{
+        try {
             Pusher.sendPush(push);
-            new util().message("Sent to "+to,getContext());
+            new util().message("Sent to " + to, getContext());
 
-        }catch (Exception ex) {new util().message(ex.toString(),getContext());
-            System.out.println(ex);}
+        } catch (Exception ex) {
+            new util().message(ex.toString(), getContext());
+            System.out.println(ex);
+        }
 
     }
 
 
     private List<String> members_call() {
-        return  null;
+        return null;
     }
 
 
     //Step1
-    private void send_data_to_firebase(String category_name,String doc_id_and_item_uploader_id) {
+    private void send_data_to_firebase(String category_name, String doc_id_and_item_uploader_id) {
         DocumentReference reference = mfirebaseFirestore.collection(getString(R.string.category_uplaod)).document(doc_id_and_item_uploader_id);
-        Vendor_uploads uploads = new Vendor_uploads(doc_id_and_item_uploader_id.concat(".png"),category_name);
+        Vendor_uploads uploads = new Vendor_uploads(doc_id_and_item_uploader_id.concat(".png"), category_name);
         reference.set(uploads).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {
                     new util().message("Uploaded  successfully.. Pls wait image uploading..", getContext());
                     credentials(doc_id_and_item_uploader_id);
-                }
-                else
-                    new util().message("Error " + task.getException(),getContext());
+                } else
+                    new util().message("Error " + task.getException(), getContext());
             }
         });
 
@@ -200,22 +203,22 @@ public class Upload extends Fragment {
     //Step2
     private void credentials(final String m) {
 
-        DocumentReference user =mfirebaseFirestore.collection("east").document("lab");
+        DocumentReference user = mfirebaseFirestore.collection("east").document("lab");
         user.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
+                if (task.isSuccessful()) {
                     p1 = task.getResult().getString("p1");
                     p2 = task.getResult().getString("p2");
                     p3 = task.getResult().getString("p3");
                     //System.out.println(id + " " + p1 + "  " + p2 + "  " + p3);
 
                     try {
-                        if(p1.length()>0 && p2.length()>0 && p3.length()>0)
-                            send_data_to_s3(imgUri,m.concat(".png"),p1,p2,p3);
+                        if (p1.length() > 0 && p2.length() > 0 && p3.length() > 0)
+                            send_data_to_s3(imgUri, m.concat(".png"), p1, p2, p3);
                     } catch (URISyntaxException e) {
-                        new util().message(e.toString(),getContext());
-                        Log.d(TAG,e.toString());
+                        new util().message(e.toString(), getContext());
+                        Log.d(TAG, e.toString());
                         mprogress.setVisibility(View.GONE);
                     }
 
@@ -223,8 +226,6 @@ public class Upload extends Fragment {
             }
         });
     }
-
-
 
 
     //Step3
@@ -249,21 +250,19 @@ public class Upload extends Fragment {
                 float percentDone = ((float) bytesCurrent / (float) bytesTotal) * 100;
                 int percentDo = (int) percentDone;
 
-                mprogress.setText("Uploading... "+percentDo);
-                if(percentDo == 100) {
+                mprogress.setText("Uploading... " + percentDo);
+                if (percentDo == 100) {
                     mprogress.setText("Uploaded");
                     hide_progress();
                 }
-
-
 
 
             }
 
             @Override
             public void onError(int id, Exception ex) {
-                new util().message(ex.getLocalizedMessage(),getContext());
-                Log.d(TAG,ex.getLocalizedMessage());
+                new util().message(ex.getLocalizedMessage(), getContext());
+                Log.d(TAG, ex.getLocalizedMessage());
                 hide_progress();
 
             }
@@ -295,7 +294,7 @@ public class Upload extends Fragment {
             if (imgUri.toString().contains("image")) {
                 image_view.setImageURI(imgUri);
             } else
-                new util().message("Pls Select an Image.",getContext());
+                new util().message("Pls Select an Image.", getContext());
         }
     }
 

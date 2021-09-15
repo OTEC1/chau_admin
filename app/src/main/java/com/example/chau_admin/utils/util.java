@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
@@ -25,7 +26,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.example.chau_admin.R;
+import com.example.chau_admin.UI.Issues;
 import com.example.chau_admin.UI.MainActivity;
+import com.example.chau_admin.UI.Report;
 import com.example.chau_admin.UI.Sign_in;
 import com.example.chau_admin.UI.Upload;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -42,8 +45,6 @@ public class util {
     public  void  message(String s, Context context){
         Toast.makeText(context, s, Toast.LENGTH_SHORT).show();
     }
-
-
 
     //Different Activity Instance
         public AppCompatActivity Compact(AppCompatActivity view) {
@@ -66,16 +67,24 @@ public class util {
 
                 switch (item.getItemId()) {
 
-                    case R.id.posted:
+                    case R.id.homes:
                         if(FirebaseAuth.getInstance().getUid()!=null)
                             view.startActivity(new Intent(view.getApplicationContext(),MainActivity.class));
                         else
                             message("Pls Sign in", view.getApplicationContext());
                         break;
 
-                    case R.id.homes:
+                    case R.id.report:
                         if(FirebaseAuth.getInstance().getUid()!=null)
-                          openFragment(new Upload(),b,view);
+                          openFragment(new Report(),b,view);
+                        else
+                            message("Pls Sign in", view.getApplicationContext());
+                        break;
+
+
+                    case R.id.issues:
+                        if(FirebaseAuth.getInstance().getUid()!=null)
+                            openFragment(new Issues(),b,view);
                         else
                             message("Pls Sign in", view.getApplicationContext());
                         break;
@@ -129,6 +138,16 @@ public class util {
 
     }
 
+
+
+    public void open_Fragment(Fragment post, Bundle b, FragmentActivity activity) {
+        FragmentTransaction fragmentManager = activity.getSupportFragmentManager().beginTransaction();
+        post.setArguments(b);
+        fragmentManager.replace(R.id.framelayout,post);
+        fragmentManager.addToBackStack(null);
+        fragmentManager.commit();
+
+    }
 
 
 

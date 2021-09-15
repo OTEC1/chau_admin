@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         LOAD_UI();
 
         if(FirebaseAuth.getInstance().getUid()!=null)
-           new util().openFragment(new Post(),b,this);
+           new util().openFragment(new Upload(),b,this);
         else
             new util().message("Pls sign in",getApplicationContext());
 
