@@ -1,6 +1,5 @@
 package com.example.chau_admin.utils;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -28,9 +27,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.chau_admin.R;
 import com.example.chau_admin.UI.Issues;
 import com.example.chau_admin.UI.MainActivity;
-import com.example.chau_admin.UI.Report;
 import com.example.chau_admin.UI.Sign_in;
-import com.example.chau_admin.UI.Upload;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -70,13 +67,6 @@ public class util {
                     case R.id.homes:
                         if(FirebaseAuth.getInstance().getUid()!=null)
                             view.startActivity(new Intent(view.getApplicationContext(),MainActivity.class));
-                        else
-                            message("Pls Sign in", view.getApplicationContext());
-                        break;
-
-                    case R.id.report:
-                        if(FirebaseAuth.getInstance().getUid()!=null)
-                          openFragment(new Report(),b,view);
                         else
                             message("Pls Sign in", view.getApplicationContext());
                         break;

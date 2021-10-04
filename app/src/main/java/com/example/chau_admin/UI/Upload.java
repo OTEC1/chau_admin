@@ -63,7 +63,7 @@ public class Upload extends Fragment {
 
 
     private EditText category_name, broadcast_message, topic_token;
-    private Button upload, select, broadcast_button,medit_post;
+    private Button upload, select, broadcast_button;
     private ImageView image_view;
     private TextView mprogress;
     private ArrayAdapter arrayAdapter;
@@ -81,7 +81,6 @@ public class Upload extends Fragment {
         mfirebaseFirestore = FirebaseFirestore.getInstance();
 
         upload = (Button) view.findViewById(R.id.upload);
-        medit_post = (Button) view.findViewById(R.id.edit_post);
         select = (Button) view.findViewById(R.id.choose);
         image_view = (ImageView) view.findViewById(R.id.photo);
         category_name = (EditText) view.findViewById(R.id.Category_name);
@@ -92,7 +91,9 @@ public class Upload extends Fragment {
         spinner = (Spinner) view.findViewById(R.id.spinner);
         Populate_spinner();
 
-        select.setOnClickListener(this::file_picker);
+        select.setOnClickListener(u -> {
+            new util().open_Fragment(new Post(), null, requireActivity());
+        });
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -109,24 +110,25 @@ public class Upload extends Fragment {
 
         upload.setOnClickListener(v -> {
             if (FirebaseAuth.getInstance().getUid() != null) {
-                if (imgUri != null) {
-                    if (getFile_extension(imgUri).equalsIgnoreCase("png") | getFile_extension(imgUri).equalsIgnoreCase("jpg") | getFile_extension(imgUri).equalsIgnoreCase("jpeg")) {
-                        if (!category_name.getText().toString().isEmpty())
-                            send_data_to_firebase(category_name.getText().toString(), generate_name());
-                        else
-                            new util().message("EditText is Empty !", getContext());
+                if (upload.getText().toString().equals("Choose File"))
+                    file_picker(v);
+                else {
+                    if (imgUri != null) {
+                        if (getFile_extension(imgUri).equalsIgnoreCase("png") | getFile_extension(imgUri).equalsIgnoreCase("jpg") | getFile_extension(imgUri).equalsIgnoreCase("jpeg")) {
+                            if (!category_name.getText().toString().isEmpty())
+                                send_data_to_firebase(category_name.getText().toString(), generate_name());
+                            else
+                                new util().message("EditText is Empty !", getContext());
+                        } else
+                            new util().message("Error Pls select only IMG files", getContext());
+
                     } else
-                        new util().message("Error Pls select only IMG files", getContext());
-
-                } else
-                    new util().message("Error Occurred while select an image file", getContext());
-
+                        new util().message("Error Occurred while select an image file", getContext());
+                }
             } else
                 new util().message("Pls sign in", getContext());
-        });
 
-        medit_post.setOnClickListener(j->{
-            new util().open_Fragment(new Post(),null,requireActivity());
+
         });
 
 
@@ -151,7 +153,7 @@ public class Upload extends Fragment {
         arrayAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, list_broadcast_section);
         arrayAdapter.setDropDownViewResource(R.layout.text_pad);
         spinner.setAdapter(arrayAdapter);
-        
+
     }
 
     private void PUSH_NOTIFICATION(String c) {
@@ -185,7 +187,7 @@ public class Upload extends Fragment {
     //Step1
     private void send_data_to_firebase(String category_name, String doc_id_and_item_uploader_id) {
         DocumentReference reference = mfirebaseFirestore.collection(getString(R.string.category_uplaod)).document(doc_id_and_item_uploader_id);
-        Vendor_uploads uploads = new Vendor_uploads(doc_id_and_item_uploader_id.concat(".png"), category_name);
+        Vendor_uploads uploads = new Vendor_uploads(doc_id_and_item_uploader_id.concat(".png"), category_name.toLowerCase());
         reference.set(uploads).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -293,6 +295,7 @@ public class Upload extends Fragment {
             assert imgUri != null;
             if (imgUri.toString().contains("image")) {
                 image_view.setImageURI(imgUri);
+                upload.setText("Upload");
             } else
                 new util().message("Pls Select an Image.", getContext());
         }
